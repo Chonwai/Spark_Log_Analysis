@@ -1,10 +1,11 @@
 import sys
 import os
 import json
-from pyspark import SparkContext
-sc = SparkContext()
+import findspark
 
-os.environ['SPARK_HOME'] = "./spark-3.0.2-bin-hadoop3.2"
+findspark.init()
+
+os.environ['SPARK_HOME'] = "/opt/spark"
 
 try:
     from pyspark import SparkContext
@@ -18,8 +19,7 @@ except ImportError as e:
     print("Can not import Spark Modules", e)
     sys.exit(1)
 
-# spark = SparkSession.builder.master('local[*]')
-# sc = spark.sparkContext
+# spark = SparkSession.builder.master('local[*]').appName("PySparkShell").getOrCreate()
 sc = SparkContext()
 
 def logParse(log):
@@ -34,5 +34,5 @@ def loadRDD(filename):
     return parsedRDD
 
 rowrdd = loadRDD("torrent-logs.txt").cache()
-result = rowrdd.take(10)
+result = rowrdd.take(10000)
 print(result)
