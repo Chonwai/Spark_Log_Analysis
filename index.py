@@ -35,8 +35,15 @@ def loadRDD(filename):
     return parsedRDD
 
 rowrdd = loadRDD("torrent-logs.txt").cache()
-ppl = rowrdd.map(lambda x: Row(event_processing=x[0], ght_data_retrieval=x[1], api_client=x[2], retriever=x[3], ghtorrent=x[4]))
-DF_ppl = sqlContext.createDataFrame(ppl)
+schema = ["logging_level","timestamp","downloader_id","retrieval_stage","operation_specific"]
+# ppl = rowrdd.map(lambda x: Row(event_processing=x[0], ght_data_retrieval=x[1], api_client=x[2], retriever=x[3], ghtorrent=x[4]))
+DF_ppl = sqlContext.createDataFrame(data=rowrdd, schema = schema)
+# rdd = sc.parallelize(DF_ppl)
+# df = rdd.toDF()
+# df.show()
 DF_ppl.printSchema()
-DF_ppl.select('*').show(100)
-DF_ppl.select('event_processing').groupBy('event_processing').count().show()
+DF_ppl.show(100)
+new_DF = DF_ppl.toDF("logging_level","timestamp","downloader_id","retrieval_stage","operation_specific")
+new_DF.show(100)
+new_DF.filter(new_DF.logging_level == "INFO").count()
+# DF_ppl.filter(DF_ppl.logging_level == "INFO").count()
