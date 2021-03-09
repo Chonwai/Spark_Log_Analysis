@@ -5,8 +5,6 @@ import findspark
 
 findspark.init()
 
-os.environ['SPARK_HOME'] = "/opt/spark"
-
 try:
     from pyspark import SparkContext
     from pyspark import SparkConf
@@ -45,5 +43,6 @@ DF_ppl.printSchema()
 DF_ppl.show(100)
 new_DF = DF_ppl.toDF("logging_level","timestamp","downloader_id","retrieval_stage","operation_specific")
 new_DF.show(100)
-new_DF.filter(new_DF.logging_level == "INFO").count()
+# new_DF.filter(lambda x : x[0]== 'INFO').count()
+print(rowrdd.filter(lambda x : x[0]== 'INFO').count())
 # DF_ppl.filter(DF_ppl.logging_level == "INFO").count()
